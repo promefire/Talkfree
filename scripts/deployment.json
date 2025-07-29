@@ -1,19 +1,19 @@
 {
   "network": "localhost",
   "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-  "timestamp": "2025-07-29T07:50:12.085Z",
+  "timestamp": "2025-07-29T14:17:01.161Z",
   "contracts": {
     "UserAccount": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "transactionHash": "0xee42180c9a551231d9d3c34ea570e6edd74ac52b8527a5697b1cae730274e308"
+      "transactionHash": "0x73995d49d4ae7dc6aa34471609e38e6ad44573733cef9995bbdf575674c29e0e"
     },
     "AccountManager": {
       "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-      "transactionHash": "0xc5eea73622d86871aa131b39d6c1869641ceea908aebfe9dc85014b804328491"
+      "transactionHash": "0x6cf95f28bac41e822c2f6115e8dc561c8651c82875575a9c2006ac93af780d9e"
     },
     "MessageManager": {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-      "transactionHash": "0x1107fdbf1f3de492ba43dbde16713a7849da2a5f0f987d6a5a58573f8a8b64ef"
+      "transactionHash": "0xbe53bbbbf65d3f10d09f0c84576c8a5e2c4fa638388f18009ed9b6cf24a471fc"
     }
   }
 }

@@ -60,12 +60,36 @@ async function main() {
   const deploymentPath = path.join(__dirname, 'deployment.json');
   fs.writeFileSync(deploymentPath, JSON.stringify(deploymentInfo, null, 2));
   
+  // 自动更新前端合约地址配置
+  const frontendAddressesPath = path.join(__dirname, '..', 'frontend', 'src', 'contracts', 'addresses.json');
+  const frontendAddresses = {
+    UserAccount: userAccountAddress,
+    AccountManager: accountManagerAddress,
+    MessageManager: messageManagerAddress
+  };
+  
+  try {
+    // 确保前端合约目录存在
+    const frontendContractsDir = path.dirname(frontendAddressesPath);
+    if (!fs.existsSync(frontendContractsDir)) {
+      fs.mkdirSync(frontendContractsDir, { recursive: true });
+    }
+    
+    fs.writeFileSync(frontendAddressesPath, JSON.stringify(frontendAddresses, null, 2));
+    console.log('✅ 前端合约地址配置已自动更新:', frontendAddressesPath);
+  } catch (error) {
+    console.warn('⚠️  更新前端合约地址配置失败:', error.message);
+    console.log('请手动更新前端配置文件:', frontendAddressesPath);
+  }
+  
   console.log('\n部署完成！');
   console.log('部署信息已保存到:', deploymentPath);
   console.log('\n合约地址:');
   console.log('UserAccount:', userAccountAddress);
   console.log('AccountManager:', accountManagerAddress);
   console.log('MessageManager:', messageManagerAddress);
+  
+  console.log('\n📝 提示: 前端合约地址配置已自动同步，无需手动修改！');
 }
 
 main()

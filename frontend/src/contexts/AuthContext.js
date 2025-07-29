@@ -12,7 +12,7 @@ const ipfs = create({
 });
 
 export const AuthProvider = ({ children }) => {
-  const { account, contracts, connected, resetConnection } = useContext(Web3Context);
+  const { account, contracts, connected, resetConnection, updateSigner } = useContext(Web3Context);
   const [currentUser, setCurrentUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -332,7 +332,12 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(true);
     localStorage.setItem('isAuthenticated', 'true');
     localStorage.setItem('currentUser', JSON.stringify(userData));
-  };
+    
+    // 如果用户数据包含钱包信息，更新Web3Context中的签名者
+     if (userData.wallet && userData.address && updateSigner) {
+       updateSigner(userData.wallet, userData.address);
+     }
+   };
 
   // 登录
   const login = async (pin) => {

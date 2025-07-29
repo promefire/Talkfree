@@ -315,4 +315,24 @@ contract UserAccount {
     function getSentFriendRequests(address _userAddress) public view returns (bytes32[] memory) {
         return sentFriendRequests[_userAddress];
     }
+    
+    /**
+     * @dev 检查用户是否存在
+     * @param _userAddress 用户地址
+     * @return 用户是否存在
+     */
+    function userExists(address _userAddress) public view returns (bool) {
+        return users[_userAddress].exists;
+    }
+    
+    /**
+     * @dev 获取用户信息
+     * @param _userAddress 用户地址
+     * @return 用户名、公钥、状态、创建时间
+     */
+    function getUser(address _userAddress) public view returns (string memory, string memory, string memory, uint256) {
+        require(users[_userAddress].exists, "User does not exist");
+        User memory user = users[_userAddress];
+        return (user.username, user.publicKey, user.status, user.createdAt);
+    }
 }

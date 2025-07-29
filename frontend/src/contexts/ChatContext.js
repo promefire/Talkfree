@@ -343,7 +343,7 @@ export const ChatProvider = ({ children }) => {
   };
 
   // 创建群组
-  const createGroup = async (name) => {
+  const createGroup = async (name, description = '', memberAddresses = []) => {
     if (!connected || !account || !contracts.userAccount || !isAuthenticated) {
       throw new Error('未连接或未认证');
     }
@@ -356,12 +356,51 @@ export const ChatProvider = ({ children }) => {
       const event = receipt.events.find(e => e.event === 'GroupCreated');
       const groupId = event.args.groupId;
       
+      // 如果有成员地址，逐个添加到群组
+      if (memberAddresses && memberAddresses.length > 0) {
+        for (const memberAddress of memberAddresses) {
+          try {
+            await addUserToGroup(groupId, memberAddress);
+          } catch (error) {
+            console.warn(`添加成员 ${memberAddress} 到群组时出错:`, error);
+          }
+        }
+      }
+      
       // 重新加载群组列表
       await loadGroups();
       
       return groupId;
     } catch (error) {
       console.error('创建群组时出错:', error);
+      throw error;
+    }
+  };
+
+  // 获取群组成员
+  const getGroupMembers = async (groupId) => {
+    if (!connected || !contracts.userAccount || !isAuthenticated) {
+      throw new Error('未连接或未认证');
+    }
+
+    try {
+      const memberAddresses = await contracts.userAccount.getGroupMembers(groupId);
+      
+      const membersData = await Promise.all(
+        memberAddresses.map(async (address) => {
+          const user = await contracts.userAccount.users(address);
+          return {
+            address,
+            username: user.username,
+            publicKey: user.publicKey,
+            createdAt: new Date(Number(user.createdAt) * 1000)
+          };
+        })
+      );
+      
+      return membersData;
+    } catch (error) {
+      console.error('获取群组成员时出错:', error);
       throw error;
     }
   };
@@ -382,6 +421,9 @@ export const ChatProvider = ({ children }) => {
     }
   };
 
+  // 添加群组成员（别名）
+  const addGroupMember = addUserToGroup;
+
   // 从群组中移除用户
   const removeUserFromGroup = async (groupId, userAddress) => {
     if (!connected || !account || !contracts.userAccount || !isAuthenticated) {
@@ -397,6 +439,9 @@ export const ChatProvider = ({ children }) => {
       throw error;
     }
   };
+
+  // 移除群组成员（别名）
+  const removeGroupMember = removeUserFromGroup;
 
   // 发送消息
   const sendMessage = async (receiverAddress, content, messageType = 0, isEncrypted = true) => {
@@ -577,8 +622,11 @@ export const ChatProvider = ({ children }) => {
     acceptFriendRequest,
     rejectFriendRequest,
     createGroup,
+    getGroupMembers,
     addUserToGroup,
+    addGroupMember,
     removeUserFromGroup,
+    removeGroupMember,
     sendMessage,
     sendGroupMessage,
     searchUsers

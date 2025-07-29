@@ -9,6 +9,8 @@
     "dev:backend": "cd backend && npm run dev",
     "build": "cd frontend && npm run build",
     "deploy": "cd scripts && npm run deploy",
+    "redeploy": "node scripts/redeploy.js",
+    "deploy:local": "npx hardhat run scripts/deploy.js --network localhost",
     "test": "npx hardhat test",
     "compile": "npx hardhat compile"
   },
@@ -26,5 +28,8 @@
     "concurrently": "^8.2.0",
     "dotenv": "^17.2.1",
     "hardhat": "^2.26.1"
+  },
+  "dependencies": {
+    "web3": "^4.16.0"
   }
 }

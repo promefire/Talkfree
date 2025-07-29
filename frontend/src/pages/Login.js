@@ -163,8 +163,27 @@ const Login = () => {
               const userData = await userAccountContract.getUser(wallet.address);
               username = userData.username || '用户';
             } else {
-              setError('该助记词对应的账户未注册，请先注册');
-              return;
+              // 用户不存在，自动创建用户账户
+              console.log('用户不存在，正在创建用户账户...');
+              
+              // 生成随机公钥
+              const publicKey = Array.from(crypto.getRandomValues(new Uint8Array(32)))
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+              
+              // 使用默认用户名
+              const defaultUsername = `用户${wallet.address.slice(-6)}`;
+              
+              try {
+                const createUserTx = await userAccountContract.createUser(defaultUsername, publicKey);
+                await createUserTx.wait();
+                username = defaultUsername;
+                console.log('用户账户创建成功:', defaultUsername);
+              } catch (createError) {
+                console.error('创建用户账户失败:', createError);
+                setError('无法创建用户账户，请检查网络连接或余额');
+                return;
+              }
             }
           }
         } catch (err) {

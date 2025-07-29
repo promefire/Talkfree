@@ -36,7 +36,8 @@ import {
   Notifications,
   Settings,
   AccountCircle,
-  ExitToApp
+  ExitToApp,
+  AccountBalanceWallet
 } from '@mui/icons-material';
 
 const Dashboard = () => {
@@ -194,6 +195,11 @@ const Dashboard = () => {
     navigate('/backup');
   };
 
+  // 处理地址管理器导航
+  const handleAddressManager = () => {
+    navigate('/addresses');
+  };
+
   // 处理登出
   const handleLogout = async () => {
     await logout();
@@ -220,6 +226,9 @@ const Dashboard = () => {
               </IconButton>
               <IconButton color="primary" onClick={handleProfile}>
                 <AccountCircle />
+              </IconButton>
+              <IconButton color="primary" onClick={handleAddressManager}>
+                <AccountBalanceWallet />
               </IconButton>
               <IconButton color="primary" onClick={handleBackup}>
                 <Settings />

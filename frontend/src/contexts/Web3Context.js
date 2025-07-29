@@ -3,14 +3,15 @@ import { ethers } from 'ethers';
 import UserAccountABI from '../contracts/abis/UserAccount.json';
 import MessageManagerABI from '../contracts/abis/MessageManager.json';
 import AccountManagerABI from '../contracts/abis/AccountManager.json';
+import contractAddresses from '../contracts/addresses.json';
 
 // 创建上下文
 export const Web3Context = createContext();
 
-// 合约地址 - 部署后需要更新这些地址
-const USER_ACCOUNT_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
-const MESSAGE_MANAGER_ADDRESS = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';
-const ACCOUNT_MANAGER_ADDRESS = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
+// 合约地址 - 从addresses.json文件中读取
+const USER_ACCOUNT_ADDRESS = contractAddresses.UserAccount;
+const MESSAGE_MANAGER_ADDRESS = contractAddresses.MessageManager;
+const ACCOUNT_MANAGER_ADDRESS = contractAddresses.AccountManager;
 
 export const Web3Provider = ({ children }) => {
   const [provider, setProvider] = useState(null);
@@ -301,6 +302,42 @@ export const Web3Provider = ({ children }) => {
     checkConnection();
   }, [initWeb3, initDirectWeb3]);
 
+  // 更新签名者和合约（用于登录后更新）
+  const updateSigner = useCallback((newSigner, newAccount) => {
+    console.log('更新签名者:', newAccount);
+    setSigner(newSigner);
+    setAccount(newAccount);
+    
+    // 重新初始化合约实例
+    if (provider) {
+      const userAccountContract = new ethers.Contract(
+        USER_ACCOUNT_ADDRESS,
+        UserAccountABI.abi,
+        newSigner
+      );
+
+      const messageManagerContract = new ethers.Contract(
+        MESSAGE_MANAGER_ADDRESS,
+        MessageManagerABI.abi,
+        newSigner
+      );
+
+      const accountManagerContract = new ethers.Contract(
+        ACCOUNT_MANAGER_ADDRESS,
+        AccountManagerABI.abi,
+        newSigner
+      );
+
+      setContracts({
+        userAccount: userAccountContract,
+        messageManager: messageManagerContract,
+        accountManager: accountManagerContract
+      });
+      
+      console.log('合约实例已更新为使用新签名者');
+    }
+  }, [provider]);
+
   // 上下文值
   const contextValue = {
     provider,
@@ -314,7 +351,8 @@ export const Web3Provider = ({ children }) => {
     initWeb3,
     initDirectWeb3,
     disconnect,
-    resetConnection
+    resetConnection,
+    updateSigner
   };
 
   // 将web3Context暴露到window对象，以便在其他地方可以访问

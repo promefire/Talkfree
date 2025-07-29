@@ -14,6 +14,7 @@ import GroupChat from './pages/GroupChat';
 import Profile from './pages/Profile';
 import AccountBackup from './pages/Backup';
 import ChangePin from './pages/ChangePin';
+import AddressManager from './components/AddressManager';
 
 // 上下文
 import { AuthProvider } from './contexts/AuthContext';
@@ -120,6 +121,11 @@ function App() {
               <Route path="/change-pin" element={
                 <ProtectedRoute>
                   <ChangePin toggleTheme={toggleTheme} darkMode={darkMode} />
+                </ProtectedRoute>
+              } />
+              <Route path="/addresses" element={
+                <ProtectedRoute>
+                  <AddressManager />
                 </ProtectedRoute>
               } />
               <Route path="*" element={<Navigate to="/" replace />} />
