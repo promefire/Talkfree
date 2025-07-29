@@ -1,0 +1,14 @@
+{
+  "name": "web3-chat-scripts",
+  "version": "1.0.0",
+  "description": "Deployment and utility scripts for Web3 Chat",
+  "scripts": {
+    "deploy": "node deploy.js",
+    "verify": "node verify.js",
+    "setup": "node setup.js"
+  },
+  "dependencies": {
+    "ethers": "^5.7.2",
+    "dotenv": "^16.3.1"
+  }
+}

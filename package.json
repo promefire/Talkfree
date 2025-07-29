@@ -1,0 +1,30 @@
+{
+  "name": "web3-chat",
+  "version": "1.0.0",
+  "description": "基于区块链的点对点聊天工具",
+  "scripts": {
+    "install-all": "npm install && cd frontend && npm install && cd ../backend && npm install && cd ../scripts && npm install",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:frontend": "cd frontend && npm start",
+    "dev:backend": "cd backend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "deploy": "cd scripts && npm run deploy",
+    "test": "npx hardhat test",
+    "compile": "npx hardhat compile"
+  },
+  "keywords": [
+    "blockchain",
+    "chat",
+    "web3",
+    "ethereum",
+    "ipfs"
+  ],
+  "author": "Web3 Chat Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.2",
+    "concurrently": "^8.2.0",
+    "dotenv": "^17.2.1",
+    "hardhat": "^2.26.1"
+  }
+}
