@@ -158,9 +158,22 @@ export const ChatProvider = ({ children }) => {
             if (message.isEncrypted) {
               try {
                 // 从IPFS获取加密内容
-                const encryptedContent = await ipfs.cat(content);
-                // 这里应该有解密逻辑，但为简化示例，我们假设内容已解密
-                content = encryptedContent.toString();
+                const chunks = [];
+                for await (const chunk of ipfs.cat(content)) {
+                  chunks.push(chunk);
+                }
+                // 使用Uint8Array和TextDecoder替代Buffer（浏览器兼容）
+                const totalLength = chunks.reduce((acc, chunk) => acc + chunk.length, 0);
+                const combined = new Uint8Array(totalLength);
+                let offset = 0;
+                for (const chunk of chunks) {
+                  combined.set(chunk, offset);
+                  offset += chunk.length;
+                }
+                const encryptedContent = new TextDecoder().decode(combined);
+                // 解析JSON并提取实际内容
+                const parsedContent = JSON.parse(encryptedContent);
+                content = parsedContent.content;
               } catch (error) {
                 console.error('解密消息时出错:', error);
                 content = '无法解密的消息';
@@ -220,9 +233,22 @@ export const ChatProvider = ({ children }) => {
           if (message.isEncrypted) {
             try {
               // 从IPFS获取加密内容
-              const encryptedContent = await ipfs.cat(content);
-              // 这里应该有解密逻辑，但为简化示例，我们假设内容已解密
-              content = encryptedContent.toString();
+              const chunks = [];
+              for await (const chunk of ipfs.cat(content)) {
+                chunks.push(chunk);
+              }
+              // 使用Uint8Array和TextDecoder替代Buffer（浏览器兼容）
+              const totalLength = chunks.reduce((acc, chunk) => acc + chunk.length, 0);
+              const combined = new Uint8Array(totalLength);
+              let offset = 0;
+              for (const chunk of chunks) {
+                combined.set(chunk, offset);
+                offset += chunk.length;
+              }
+              const encryptedContent = new TextDecoder().decode(combined);
+              // 解析JSON并提取实际内容
+              const parsedContent = JSON.parse(encryptedContent);
+              content = parsedContent.content;
             } catch (error) {
               console.error('解密消息时出错:', error);
               content = '无法解密的消息';
@@ -465,8 +491,8 @@ export const ChatProvider = ({ children }) => {
         };
         
         // 上传到IPFS
-        const { path } = await ipfs.add(JSON.stringify(encryptedContent));
-        contentHash = path;
+        const result = await ipfs.add(JSON.stringify(encryptedContent));
+        contentHash = result.cid.toString();
       }
       
       // 发送消息
@@ -511,8 +537,8 @@ export const ChatProvider = ({ children }) => {
         };
         
         // 上传到IPFS
-        const { path } = await ipfs.add(JSON.stringify(encryptedContent));
-        contentHash = path;
+        const result = await ipfs.add(JSON.stringify(encryptedContent));
+        contentHash = result.cid.toString();
       }
       
       // 发送群组消息
